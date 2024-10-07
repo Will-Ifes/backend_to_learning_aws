@@ -1,0 +1,102 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Tenant {
+  id        Int       @id @default(autoincrement())
+  name      String
+  cnpj      String    @unique
+  address   String
+  phone     String
+  email     String
+  contact   String
+  users     User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+  Movements Movement[]
+}
+
+model User {
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  password          String
+  name              String?
+  cpf               String    @unique
+  dateOfBirth       DateTime?
+  dailyExposureHours Int?
+  role              Role      @default(USER)
+  tenantId          Int
+  Tenant            Tenant    @relation(fields: [tenantId], references: [id])
+  status            Status    @default(ACTIVE)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  Movements         Movement[]
+}
+
+model Supplier {
+  id        Int       @id @default(autoincrement())
+  name      String
+  cnpj      String    @unique
+  address   String
+  phone     String
+  email     String
+  contact   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  supplierId  Int
+  brand       String
+  unit        String
+  quantity    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Supplier    Supplier @relation(fields: [supplierId], references: [id])
+  tenantId    Int
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  movements   Movement[]
+  image       Bytes?
+}
+
+model Movement {
+  id          Int       @id @default(autoincrement())
+  type        MovementType
+  date        DateTime
+  quantity    Int
+  value       Float
+  productId   Int
+  Product     Product   @relation(fields: [productId], references: [id])
+  userId      Int
+  User        User      @relation(fields: [userId], references: [id])
+  tenantId    Int
+  Tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum MovementType {
+  ENTRY
+  EXIT
+}
