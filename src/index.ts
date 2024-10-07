@@ -4,6 +4,8 @@ import authRoutes from "./routes/auth";
 import { authenticateToken } from "./middleware/auth";
 
 const app = express();
+require("dotenv").config();
+
 app.use(
   cors({
     origin: "http://localhost:3000", // ajuste para o domínio que precisa de acesso
@@ -33,6 +35,7 @@ app.use(
   }
 );
 
-app.listen(process.env.PORT, () => {
+const PORT = process.env.PORT;
+app.listen(PORT, () => {
   console.log(`Backend running at ${process.env.BACKEND_URL}`);
 });
