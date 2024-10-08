@@ -378,7 +378,73 @@ router.get('/users', async (req: Request, res: Response) => {
   res.json(users);
 });
 
-// Adicionando a rota GET para listar todos os usuários com filtros, paginação, ordenação e seleção de campos
+/**
+ * @swagger
+ * /auth/users/pagination:
+ *   get:
+ *     summary: Lista todos os usuários com filtros, paginação, ordenação e seleção de campos
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número da página
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Número de usuários por página
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           default: id
+ *         description: Campo para ordenação
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: asc
+ *         description: Ordem de ordenação
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *         description: Campos a serem selecionados, separados por vírgula
+ *       - in: query
+ *         name: filters
+ *         schema:
+ *           type: object
+ *         description: Filtros para busca
+ *     responses:
+ *       200:
+ *         description: Lista de usuários
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *       500:
+ *         description: Erro ao buscar usuários
+ */
 router.get('/users/pagination', async (req: Request, res: Response) => {
   const {
     page = 1,

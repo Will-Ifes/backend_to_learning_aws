@@ -2,11 +2,14 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth';
 import { authenticateToken } from './middleware/auth';
+import swaggerApp from './swagger';
 
 const app = express();
 require('dotenv').config();
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(';') ?? '';
+
+app.use(swaggerApp);
 
 app.use(
   cors({
