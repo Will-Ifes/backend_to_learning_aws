@@ -264,8 +264,85 @@ const productSchema = z.object({
   image: z.string().optional(),
 });
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Registra um novo usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: O email do usuário
+ *               cpf:
+ *                 type: string
+ *                 description: O CPF do usuário
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: A senha do usuário
+ *               name:
+ *                 type: string
+ *                 description: O nome do usuário
+ *               tenantId:
+ *                 type: string
+ *                 description: O ID do tenant
+ *             required:
+ *               - email
+ *               - cpf
+ *               - password
+ *               - name
+ *               - tenantId
+ *     responses:
+ *       200:
+ *         description: Usuário registrado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 cpf:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 tenantId:
+ *                   type: string
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       500:
+ *         description: Erro ao registrar usuário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
 router.post(
-  // testada e funcionando
   '/register',
   async (req: Request<{}, {}, RegisterRequestBody>, res: Response | any) => {
     try {
