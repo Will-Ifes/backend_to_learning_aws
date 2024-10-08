@@ -11,19 +11,8 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(';') ?? '';
 
 app.use(swaggerApp);
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['*'], // defina os métodos permitidos
-    credentials: true, // se precisar enviar cookies/sessões
-  }),
-);
+// Permitir todas as origens temporariamente
+app.use(cors());
 
 app.use(express.json());
 

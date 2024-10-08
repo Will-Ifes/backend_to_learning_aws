@@ -264,6 +264,8 @@ const productSchema = z.object({
   image: z.string().optional(),
 });
 
+
+
 /**
  * @swagger
  * /auth/register:
@@ -291,7 +293,7 @@ const productSchema = z.object({
  *                 type: string
  *                 description: O nome do usuário
  *               tenantId:
- *                 type: string
+ *                 type: integer
  *                 description: O ID do tenant
  *             required:
  *               - email
@@ -299,6 +301,12 @@ const productSchema = z.object({
  *               - password
  *               - name
  *               - tenantId
+ *             example:
+ *               email: "user@example.com"
+ *               cpf: "10587421589"
+ *               password: "teste0123"
+ *               name: "string"
+ *               tenantId: 78
  *     responses:
  *       200:
  *         description: Usuário registrado com sucesso
