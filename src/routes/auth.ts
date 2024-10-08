@@ -142,16 +142,16 @@
  * @returns A success message or an error message.
  */
 
-import multer from "multer";
-import { Router, Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
-import { z } from "zod";
+import multer from 'multer';
+import { Router, Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import { PrismaClient } from '@prisma/client';
+import jwt from 'jsonwebtoken';
+import { z } from 'zod';
 
 const router = Router();
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "default_secret"; // Use uma variável de ambiente para a chave secreta
+const JWT_SECRET = process.env.JWT_SECRET || 'default_secret'; // Use uma variável de ambiente para a chave secreta
 const upload = multer({ storage: multer.memoryStorage() });
 
 interface RegisterRequestBody {
@@ -183,82 +183,82 @@ interface CreateTenantRequestBody {
 }
 
 const registerSchema = z.object({
-  email: z.string().email("Insira um email válido"),
-  cpf: z.string().length(11, "O CPF deve ter 11 caracteres"),
-  password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres"),
-  name: z.string().min(1, "O nome é obrigatório"),
-  tenantId: z.number().int().positive("O tenantId deve ser um número positivo"),
+  email: z.string().email('Insira um email válido'),
+  cpf: z.string().length(11, 'O CPF deve ter 11 caracteres'),
+  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
+  name: z.string().min(1, 'O nome é obrigatório'),
+  tenantId: z.number().int().positive('O tenantId deve ser um número positivo'),
 });
 
 const loginSchema = z.object({
-  email: z.string().email("Insira um email válido"),
-  password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres"),
+  email: z.string().email('Insira um email válido'),
+  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
 });
 
 const updateUserSchema = z.object({
-  email: z.string().email("Insira um email válido").optional(),
-  name: z.string().min(1, "O nome é obrigatório").optional(),
+  email: z.string().email('Insira um email válido').optional(),
+  name: z.string().min(1, 'O nome é obrigatório').optional(),
   tenantId: z
     .number()
     .int()
-    .positive("O tenantId deve ser um número positivo")
+    .positive('O tenantId deve ser um número positivo')
     .optional(),
 });
 
 const createTenantSchema = z.object({
-  name: z.string().min(1, "O nome é obrigatório"),
-  cnpj: z.string().length(14, "O CNPJ deve ter 14 caracteres"),
-  address: z.string().min(1, "O endereço é obrigatório"),
-  phone: z.string().min(1, "O telefone é obrigatório"),
-  email: z.string().email("Insira um email válido"),
-  contact: z.string().min(1, "O contato é obrigatório"),
+  name: z.string().min(1, 'O nome é obrigatório'),
+  cnpj: z.string().length(14, 'O CNPJ deve ter 14 caracteres'),
+  address: z.string().min(1, 'O endereço é obrigatório'),
+  phone: z.string().min(1, 'O telefone é obrigatório'),
+  email: z.string().email('Insira um email válido'),
+  contact: z.string().min(1, 'O contato é obrigatório'),
 });
 
 const tenantSchema = z.object({
-  name: z.string().min(1, "O nome é obrigatório"),
-  cnpj: z.string().length(14, "O CNPJ deve ter 14 caracteres"),
-  address: z.string().min(1, "O endereço é obrigatório"),
-  phone: z.string().min(1, "O telefone é obrigatório"),
-  email: z.string().email("Insira um email válido"),
-  contact: z.string().min(1, "O contato é obrigatório"),
+  name: z.string().min(1, 'O nome é obrigatório'),
+  cnpj: z.string().length(14, 'O CNPJ deve ter 14 caracteres'),
+  address: z.string().min(1, 'O endereço é obrigatório'),
+  phone: z.string().min(1, 'O telefone é obrigatório'),
+  email: z.string().email('Insira um email válido'),
+  contact: z.string().min(1, 'O contato é obrigatório'),
 });
 
 const supplierSchema = z.object({
-  name: z.string().min(1, "O nome é obrigatório"),
-  cnpj: z.string().length(14, "O CNPJ deve ter 14 caracteres"),
-  address: z.string().min(1, "O endereço é obrigatório"),
-  phone: z.string().min(1, "O telefone é obrigatório"),
-  email: z.string().email("Insira um email válido"),
-  contact: z.string().min(1, "O contato é obrigatório"),
+  name: z.string().min(1, 'O nome é obrigatório'),
+  cnpj: z.string().length(14, 'O CNPJ deve ter 14 caracteres'),
+  address: z.string().min(1, 'O endereço é obrigatório'),
+  phone: z.string().min(1, 'O telefone é obrigatório'),
+  email: z.string().email('Insira um email válido'),
+  contact: z.string().min(1, 'O contato é obrigatório'),
 });
 
 const productSchema = z.object({
-  name: z.string().min(1, "O nome é obrigatório").optional(),
-  description: z.string().min(1, "A descrição é obrigatória").optional(),
+  name: z.string().min(1, 'O nome é obrigatório').optional(),
+  description: z.string().min(1, 'A descrição é obrigatória').optional(),
   price: z
     .preprocess(
       (val) => Number(val),
-      z.number().positive("O preço deve ser um número positivo")
+      z.number().positive('O preço deve ser um número positivo'),
     )
     .optional(),
   supplierId: z
     .preprocess(
       (val) => Number(val),
-      z.number().int().positive("O supplierId deve ser um número positivo")
+      z.number().int().positive('O supplierId deve ser um número positivo'),
     )
     .optional(),
-  brand: z.string().min(1, "A marca é obrigatória").optional(),
-  unit: z.string().min(1, "A unidade é obrigatória").optional(),
+  brand: z.string().min(1, 'A marca é obrigatória').optional(),
+  unit: z.string().min(1, 'A unidade é obrigatória').optional(),
   quantity: z
     .preprocess(
       (val) => Number(val),
-      z.number().int().positive("A quantidade deve ser um número positivo")
+      z.number().int().positive('A quantidade deve ser um número positivo'),
     )
     .optional(),
   tenantId: z
     .preprocess(
       (val) => Number(val),
-      z.number().int().positive("O tenantId deve ser um número positivo")
+      z.number().int().positive('O tenantId deve ser um número positivo'),
     )
     .optional(),
   image: z.string().optional(),
@@ -266,15 +266,15 @@ const productSchema = z.object({
 
 router.post(
   // testada e funcionando
-  "/register",
+  '/register',
   async (req: Request<{}, {}, RegisterRequestBody>, res: Response | any) => {
     try {
       const parsedData = registerSchema.safeParse(req.body);
 
       if (!parsedData.success) {
-        console.error("Dados inválidos:", parsedData.error);
+        console.error('Dados inválidos:', parsedData.error);
         return res.status(400).json({
-          message: "Dados inválidos",
+          message: 'Dados inválidos',
           errors: parsedData.error.errors,
         });
       }
@@ -286,7 +286,7 @@ router.post(
         where: { id: tenantId },
       });
       if (!tenant) {
-        return res.status(400).json({ error: "Invalid tenantId" });
+        return res.status(400).json({ error: 'Invalid tenantId' });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -301,23 +301,23 @@ router.post(
       });
       res.json(user);
     } catch (error: any) {
-      console.error("Erro ao registrar usuário:", error);
+      console.error('Erro ao registrar usuário:', error);
       res
         .status(500)
-        .json({ error: "Erro ao registrar usuário", details: error.message });
+        .json({ error: 'Erro ao registrar usuário', details: error.message });
     }
-  }
+  },
 );
 
 async function loginUser(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    throw new Error("Usuário não encontrado");
+    throw new Error('Usuário não encontrado');
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new Error("Credenciais inválidas");
+    throw new Error('Credenciais inválidas');
   }
 
   const token = jwt.sign(
@@ -329,7 +329,7 @@ async function loginUser(email: string, password: string) {
       email: user.email,
     },
     JWT_SECRET, // Use a variável de ambiente para a chave secreta
-    { expiresIn: "1d" }
+    { expiresIn: '1d' },
   );
 
   return {
@@ -344,7 +344,7 @@ async function loginUser(email: string, password: string) {
 }
 
 router.post(
-  "/login",
+  '/login',
   async (req: Request<{}, {}, LoginRequestBody>, res: Response | any) => {
     const { email, password } = req.body;
 
@@ -352,67 +352,67 @@ router.post(
       const parsedCredentials = loginSchema.safeParse({ email, password });
 
       if (!parsedCredentials.success) {
-        console.error("Credenciais inválidas:", parsedCredentials.error);
-        return res.status(400).json({ message: "Credenciais inválidas" });
+        console.error('Credenciais inválidas:', parsedCredentials.error);
+        return res.status(400).json({ message: 'Credenciais inválidas' });
       }
 
       const { token, user } = await loginUser(email, password);
-      res.json({ message: "Login bem-sucedido", token, user });
+      res.json({ message: 'Login bem-sucedido', token, user });
     } catch (error) {
-      console.error("Erro ao fazer login:", (error as Error).message);
-      if ((error as Error).message === "Usuário não encontrado") {
-        return res.status(404).json({ message: "Usuário não encontrado" });
-      } else if ((error as Error).message === "Credenciais inválidas") {
-        return res.status(401).json({ message: "Credenciais inválidas" });
+      console.error('Erro ao fazer login:', (error as Error).message);
+      if ((error as Error).message === 'Usuário não encontrado') {
+        return res.status(404).json({ message: 'Usuário não encontrado' });
+      } else if ((error as Error).message === 'Credenciais inválidas') {
+        return res.status(401).json({ message: 'Credenciais inválidas' });
       } else {
-        return res.status(500).json({ message: "Erro ao fazer login" });
+        return res.status(500).json({ message: 'Erro ao fazer login' });
       }
     }
-  }
+  },
 );
 
 // Adicionando a rota GET para listar todos os usuários
-router.get("/users", async (req: Request, res: Response) => {
+router.get('/users', async (req: Request, res: Response) => {
   //testada e funcionando
   const users = await prisma.user.findMany();
   res.json(users);
 });
 
 // Adicionando a rota GET para buscar um usuário pelo email
-router.get("/user/:email", async (req: Request, res: Response | any) => {
+router.get('/user/:email', async (req: Request, res: Response | any) => {
   //testada e funcionando
   const { email } = req.params;
   try {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado" });
+      return res.status(404).json({ error: 'Usuário não encontrado' });
     }
     res.json(user);
   } catch (error) {
-    console.error("Erro ao buscar usuário:", error);
-    res.status(500).json({ error: "Erro ao buscar usuário" });
+    console.error('Erro ao buscar usuário:', error);
+    res.status(500).json({ error: 'Erro ao buscar usuário' });
   }
 });
 
 // Adicionando a rota PATCH para atualizar um usuário
 router.patch(
   // testada e funcionando
-  "/user/:id",
+  '/user/:id',
   async (
     req: Request<
       { id: string },
       {},
       UpdateUserRequestBody & { password?: string }
     >,
-    res: Response | any
+    res: Response | any,
   ) => {
     const parsedData = updateUserSchema
       .extend({
         password: z
           .string()
-          .min(8, "A senha deve ter no mínimo 8 caracteres")
+          .min(8, 'A senha deve ter no mínimo 8 caracteres')
           .optional(),
-        cpf: z.string().length(11, "O CPF deve ter 11 caracteres").optional(),
+        cpf: z.string().length(11, 'O CPF deve ter 11 caracteres').optional(),
         dateOfBirth: z.string().optional(),
         dailyExposureHours: z.number().optional(),
         status: z.string().optional(),
@@ -420,9 +420,9 @@ router.patch(
       .safeParse(req.body);
 
     if (!parsedData.success) {
-      console.error("Dados inválidos:", parsedData.error);
+      console.error('Dados inválidos:', parsedData.error);
       return res.status(400).json({
-        message: "Dados inválidos",
+        message: 'Dados inválidos',
         errors: parsedData.error.errors,
       });
     }
@@ -460,31 +460,31 @@ router.patch(
       });
       res.json(user);
     } catch (error) {
-      console.error("Erro ao atualizar usuário:", error);
-      res.status(500).json({ error: "Erro ao atualizar usuário" });
+      console.error('Erro ao atualizar usuário:', error);
+      res.status(500).json({ error: 'Erro ao atualizar usuário' });
     }
-  }
+  },
 );
 
 // Adicionando a rota DELETE para deletar um usuário
 router.delete(
-  "/user/:id",
+  '/user/:id',
   async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
     try {
       await prisma.user.delete({
         where: { id: Number(id) },
       });
-      res.json({ message: "Usuário deletado com sucesso" });
+      res.json({ message: 'Usuário deletado com sucesso' });
     } catch (error) {
-      console.error("Erro ao deletar usuário:", error);
-      res.status(500).json({ error: "Erro ao deletar usuário" });
+      console.error('Erro ao deletar usuário:', error);
+      res.status(500).json({ error: 'Erro ao deletar usuário' });
     }
-  }
+  },
 );
 
 // Adicionando a rota GET para listar todos os tenants
-router.get("/tenants", async (req: Request, res: Response) => {
+router.get('/tenants', async (req: Request, res: Response) => {
   //testada e funcionando
   const tenants = await prisma.tenant.findMany();
   res.json(tenants);
@@ -493,17 +493,17 @@ router.get("/tenants", async (req: Request, res: Response) => {
 // Adicionando a rota POST para criar um tenant
 router.post(
   // testada e funcionando
-  "/tenant",
+  '/tenant',
   async (
     req: Request<{}, {}, CreateTenantRequestBody>,
-    res: Response | any
+    res: Response | any,
   ) => {
     const parsedData = createTenantSchema.safeParse(req.body);
 
     if (!parsedData.success) {
-      console.error("Dados inválidos:", parsedData.error);
+      console.error('Dados inválidos:', parsedData.error);
       return res.status(400).json({
-        message: "Dados inválidos",
+        message: 'Dados inválidos',
         errors: parsedData.error.errors,
       });
     }
@@ -523,55 +523,55 @@ router.post(
       });
       res.json(tenant);
     } catch (error) {
-      console.error("Erro ao criar tenant:", error);
-      res.status(500).json({ error: "Erro ao criar tenant" });
+      console.error('Erro ao criar tenant:', error);
+      res.status(500).json({ error: 'Erro ao criar tenant' });
     }
-  }
+  },
 );
 
 // Adicionando a rota PATCH para atualizar um tenant
 router.patch(
   // testada e funcionando
-  "/tenant/:id",
+  '/tenant/:id',
   async (req: Request<{ id: string }>, res: Response | any) => {
     const parsedData = tenantSchema.safeParse(req.body);
     if (!parsedData.success) {
       return res
         .status(400)
-        .json({ message: "Dados inválidos", errors: parsedData.error.errors });
+        .json({ message: 'Dados inválidos', errors: parsedData.error.errors });
     }
     const tenant = await prisma.tenant.update({
       where: { id: Number(req.params.id) },
       data: parsedData.data,
     });
     res.json(tenant);
-  }
+  },
 );
 
 // Adicionando a rota DELETE para deletar um tenant
 router.delete(
-  "/tenant/:id",
+  '/tenant/:id',
   async (req: Request<{ id: string }>, res: Response) => {
     await prisma.tenant.delete({ where: { id: Number(req.params.id) } });
-    res.json({ message: "Tenant deletado com sucesso" });
-  }
+    res.json({ message: 'Tenant deletado com sucesso' });
+  },
 );
 
 // Adicionando a rota GETT para listar todos suppliers
-router.get("/suppliers", async (req: Request, res: Response) => {
+router.get('/suppliers', async (req: Request, res: Response) => {
   // testada e funcionando
   const suppliers = await prisma.supplier.findMany();
   res.json(suppliers);
 });
 
 // Adicionando a rota POST para criar um supplier
-router.post("/supplier", async (req: Request, res: Response | any) => {
+router.post('/supplier', async (req: Request, res: Response | any) => {
   // testada e funcionando
   const parsedData = supplierSchema.safeParse(req.body);
   if (!parsedData.success) {
     return res
       .status(400)
-      .json({ message: "Dados inválidos", errors: parsedData.error.errors });
+      .json({ message: 'Dados inválidos', errors: parsedData.error.errors });
   }
   const supplier = await prisma.supplier.create({ data: parsedData.data });
   res.json(supplier);
@@ -580,48 +580,48 @@ router.post("/supplier", async (req: Request, res: Response | any) => {
 // Adicionando a rota PATCH para atualizar um supplier
 router.patch(
   // testada e funcionando
-  "/supplier/:id",
+  '/supplier/:id',
   async (req: Request<{ id: string }>, res: Response | any) => {
     const parsedData = supplierSchema.safeParse(req.body);
     if (!parsedData.success) {
       return res
         .status(400)
-        .json({ message: "Dados inválidos", errors: parsedData.error.errors });
+        .json({ message: 'Dados inválidos', errors: parsedData.error.errors });
     }
     const supplier = await prisma.supplier.update({
       where: { id: Number(req.params.id) },
       data: parsedData.data,
     });
     res.json(supplier);
-  }
+  },
 );
 
 // Adicionando a rota DELETE para deletar um supplier
 router.delete(
   // testada e funcionando
-  "/supplier/:id",
+  '/supplier/:id',
   async (req: Request<{ id: string }>, res: Response) => {
     await prisma.supplier.delete({ where: { id: Number(req.params.id) } });
-    res.json({ message: "Supplier deletado com sucesso" });
-  }
+    res.json({ message: 'Supplier deletado com sucesso' });
+  },
 );
 
 // Adicionando a rota GET para listar os products
-router.get("/products", async (req: Request, res: Response) => {
+router.get('/products', async (req: Request, res: Response) => {
   const products = await prisma.product.findMany();
   res.json(products);
 });
 
 // Adicionando a rota POST para criar um product
 router.post(
-  "/product",
-  upload.single("image"),
+  '/product',
+  upload.single('image'),
   async (req: Request, res: Response | any) => {
     const parsedData = productSchema.safeParse(req.body);
     if (!parsedData.success) {
       return res
         .status(400)
-        .json({ message: "Dados inválidos", errors: parsedData.error.errors });
+        .json({ message: 'Dados inválidos', errors: parsedData.error.errors });
     }
 
     const { tenantId, ...productData } = parsedData.data;
@@ -639,21 +639,21 @@ router.post(
       });
       res.json(product);
     } catch (error) {
-      res.status(500).json({ message: "Erro ao criar o produto", error });
+      res.status(500).json({ message: 'Erro ao criar o produto', error });
     }
-  }
+  },
 );
 
 // Adicionando a rota PATCH para atualizar os product
 router.patch(
-  "/product/:id",
-  upload.single("image"),
+  '/product/:id',
+  upload.single('image'),
   async (req: Request<{ id: string }>, res: Response | any) => {
     const parsedData = productSchema.safeParse(req.body);
     if (!parsedData.success) {
       return res
         .status(400)
-        .json({ message: "Dados inválidos", errors: parsedData.error });
+        .json({ message: 'Dados inválidos', errors: parsedData.error });
     }
 
     const { tenantId, ...productData } = parsedData.data;
@@ -672,18 +672,18 @@ router.patch(
       });
       res.json(product);
     } catch (error) {
-      res.status(500).json({ message: "Erro ao atualizar o produto", error });
+      res.status(500).json({ message: 'Erro ao atualizar o produto', error });
     }
-  }
+  },
 );
 
 // Adicionando a rota DELETE para atualizar um product
 router.delete(
-  "/product/:id",
+  '/product/:id',
   async (req: Request<{ id: string }>, res: Response) => {
     await prisma.product.delete({ where: { id: Number(req.params.id) } });
-    res.json({ message: "Product deletado com sucesso" });
-  }
+    res.json({ message: 'Product deletado com sucesso' });
+  },
 );
 
 export default router;

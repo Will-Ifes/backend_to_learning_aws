@@ -1,5 +1,5 @@
-import { PrismaClient, Role, Status, MovementType } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import { PrismaClient, Role, Status, MovementType } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -11,28 +11,28 @@ async function main() {
   const tenants = await prisma.tenant.createMany({
     data: [
       {
-        name: "Tenant 1",
-        cnpj: "12345678000101",
-        address: "Address 1",
-        phone: "1234567890",
-        email: "tenant1@example.com",
-        contact: "Contact 1",
+        name: 'Tenant 1',
+        cnpj: '12345678000101',
+        address: 'Address 1',
+        phone: '1234567890',
+        email: 'tenant1@example.com',
+        contact: 'Contact 1',
       },
       {
-        name: "Tenant 2",
-        cnpj: "12345678000102",
-        address: "Address 2",
-        phone: "1234567891",
-        email: "tenant2@example.com",
-        contact: "Contact 2",
+        name: 'Tenant 2',
+        cnpj: '12345678000102',
+        address: 'Address 2',
+        phone: '1234567891',
+        email: 'tenant2@example.com',
+        contact: 'Contact 2',
       },
       {
-        name: "Tenant 3",
-        cnpj: "12345678000103",
-        address: "Address 3",
-        phone: "1234567892",
-        email: "tenant3@example.com",
-        contact: "Contact 3",
+        name: 'Tenant 3',
+        cnpj: '12345678000103',
+        address: 'Address 3',
+        phone: '1234567892',
+        email: 'tenant3@example.com',
+        contact: 'Contact 3',
       },
     ],
   });
@@ -48,44 +48,44 @@ async function main() {
   const suppliers = await prisma.supplier.createMany({
     data: [
       {
-        name: "Supplier 1",
-        cnpj: "22345678000101",
-        address: "Supplier Address 1",
-        phone: "2234567890",
-        email: "supplier1@example.com",
-        contact: "Supplier Contact 1",
+        name: 'Supplier 1',
+        cnpj: '22345678000101',
+        address: 'Supplier Address 1',
+        phone: '2234567890',
+        email: 'supplier1@example.com',
+        contact: 'Supplier Contact 1',
       },
       {
-        name: "Supplier 2",
-        cnpj: "22345678000102",
-        address: "Supplier Address 2",
-        phone: "2234567891",
-        email: "supplier2@example.com",
-        contact: "Supplier Contact 2",
+        name: 'Supplier 2',
+        cnpj: '22345678000102',
+        address: 'Supplier Address 2',
+        phone: '2234567891',
+        email: 'supplier2@example.com',
+        contact: 'Supplier Contact 2',
       },
       {
-        name: "Supplier 3",
-        cnpj: "22345678000103",
-        address: "Supplier Address 3",
-        phone: "2234567892",
-        email: "supplier3@example.com",
-        contact: "Supplier Contact 3",
+        name: 'Supplier 3',
+        cnpj: '22345678000103',
+        address: 'Supplier Address 3',
+        phone: '2234567892',
+        email: 'supplier3@example.com',
+        contact: 'Supplier Contact 3',
       },
       {
-        name: "Supplier 4",
-        cnpj: "22345678000104",
-        address: "Supplier Address 4",
-        phone: "2234567893",
-        email: "supplier4@example.com",
-        contact: "Supplier Contact 4",
+        name: 'Supplier 4',
+        cnpj: '22345678000104',
+        address: 'Supplier Address 4',
+        phone: '2234567893',
+        email: 'supplier4@example.com',
+        contact: 'Supplier Contact 4',
       },
       {
-        name: "Supplier 5",
-        cnpj: "22345678000105",
-        address: "Supplier Address 5",
-        phone: "2234567894",
-        email: "supplier5@example.com",
-        contact: "Supplier Contact 5",
+        name: 'Supplier 5',
+        cnpj: '22345678000105',
+        address: 'Supplier Address 5',
+        phone: '2234567894',
+        email: 'supplier5@example.com',
+        contact: 'Supplier Contact 5',
       },
     ],
   });
@@ -122,7 +122,7 @@ async function main() {
 
   // Criar Usuários
   const users = [];
-  const hashedPassword = await bcrypt.hash("password", 10);
+  const hashedPassword = await bcrypt.hash('password', 10);
   for (let i = 1; i <= 50; i++) {
     users.push({
       email: `user${i}@example.com`,
