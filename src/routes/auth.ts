@@ -378,6 +378,62 @@ router.get('/users', async (req: Request, res: Response) => {
   res.json(users);
 });
 
+// Adicionando a rota GET para listar todos os usuários com filtros, paginação, ordenação e seleção de campos
+router.get('/users/pagination', async (req: Request, res: Response) => {
+  const {
+    page = 1,
+    limit = 10,
+    sort = 'id',
+    order = 'asc',
+    fields,
+    ...filters
+  } = req.query;
+
+  // Convertendo page e limit para números
+  const pageNumber = parseInt(page as string, 10);
+  const limitNumber = parseInt(limit as string, 10);
+
+  // Construindo o objeto de ordenação
+  const orderBy = { [sort as string]: order as 'asc' | 'desc' };
+
+  // Construindo o objeto de seleção de campos
+  const select = fields
+    ? (fields as string).split(',').reduce(
+        (acc, field) => {
+          acc[field] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      )
+    : undefined;
+
+  try {
+    // Buscando os usuários com filtros, paginação, ordenação e seleção de campos
+    const users = await prisma.user.findMany({
+      where: filters,
+      skip: (pageNumber - 1) * limitNumber,
+      take: limitNumber,
+      orderBy,
+      select,
+    });
+
+    // Contando o total de usuários para paginação
+    const totalUsers = await prisma.user.count({ where: filters });
+
+    res.json({
+      data: users,
+      meta: {
+        total: totalUsers,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(totalUsers / limitNumber),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar usuários' });
+  }
+});
+
 // Adicionando a rota GET para buscar um usuário pelo email
 router.get('/user/:email', async (req: Request, res: Response | any) => {
   //testada e funcionando
