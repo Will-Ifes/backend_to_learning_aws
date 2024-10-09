@@ -7,13 +7,23 @@ import swaggerApp from './swagger';
 const app = express();
 require('dotenv').config();
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(';') ?? '';
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(';') ?? ['*'];
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 
 app.use(swaggerApp);
-
-// Permitir todas as origens temporariamente
-app.use(cors());
-
 app.use(express.json());
 
 interface CustomRequest extends Request {}
@@ -35,7 +45,7 @@ app.use(
   },
 );
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Backend running at ${process.env.BACKEND_URL}`);
 });
