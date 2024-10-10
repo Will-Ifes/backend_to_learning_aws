@@ -54,7 +54,9 @@ app.use(
   },
 );
 
-const PORT = process.env.PORT || 3333;
+const PORT = process.env.PORT || 5432;
+const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${PORT}`;
+
 app.listen(PORT, () => {
-  console.log(`Backend running at ${process.env.BACKEND_URL}`);
+  console.log(`Backend running at ${BACKEND_URL}`);
 });
