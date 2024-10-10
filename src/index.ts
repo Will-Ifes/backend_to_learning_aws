@@ -3,6 +3,9 @@ import cors from 'cors';
 import authRoutes from './routes/auth';
 import { authenticateToken } from './middleware/auth';
 import swaggerApp from './swagger';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
 
 const app = express();
 require('dotenv').config();
@@ -54,7 +57,16 @@ app.use(
   },
 );
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Backend running at ${process.env.BACKEND_URL}`);
+// Configurações de certificado
+const options = {
+  key: fs.readFileSync(path.join(__dirname, '../server.key')), // Ajuste para acessar a raiz
+  cert: fs.readFileSync(path.join(__dirname, '../server.cert')) // Ajuste para acessar a raiz
+};
+
+// Porta padrão HTTPS
+const PORT = process.env.PORT || 443; 
+
+// Criar servidor HTTPS
+https.createServer(options, app).listen(PORT, () => {
+  console.log(`Backend running at https://${process.env.BACKEND_URL}`);
 });
