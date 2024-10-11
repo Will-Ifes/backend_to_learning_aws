@@ -1,13 +1,21 @@
-import { PrismaClient, Role, Status, MovementType } from '@prisma/client';
+import { PrismaClient, Role, Status, StockManagementType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Limpar a tabela Tenant antes de inserir novos registros
+  // Limpar todas as tabelas antes de inserir novos registros
+  await prisma.stockManagement.deleteMany({});
+  await prisma.user.deleteMany({});
+  await prisma.product.deleteMany({});
+  await prisma.supplier.deleteMany({});
   await prisma.tenant.deleteMany({});
+  await prisma.sector.deleteMany({});
+  await prisma.employeePositions.deleteMany({});
+  await prisma.activationCode.deleteMany({});
+  await prisma.accessGroup.deleteMany({});
 
-  // Criar Tenants e obter seus IDs
+  // Criar Tenants
   const tenants = await prisma.tenant.createMany({
     data: [
       {
@@ -41,10 +49,7 @@ async function main() {
     .findMany()
     .then((tenants) => tenants.map((tenant) => tenant.id));
 
-  // Limpar a tabela Supplier antes de inserir novos registros
-  await prisma.supplier.deleteMany({});
-
-  // Criar Suppliers e obter seus IDs
+  // Criar Suppliers
   const suppliers = await prisma.supplier.createMany({
     data: [
       {
@@ -94,10 +99,7 @@ async function main() {
     .findMany()
     .then((suppliers) => suppliers.map((supplier) => supplier.id));
 
-  // Limpar a tabela Product antes de inserir novos registros
-  await prisma.product.deleteMany({});
-
-  // Criar Produtos e obter seus IDs
+  // Criar Produtos
   const products = [];
   for (let i = 1; i <= 50; i++) {
     products.push({
@@ -117,8 +119,57 @@ async function main() {
     .findMany()
     .then((products) => products.map((product) => product.id));
 
-  // Limpar a tabela User antes de inserir novos registros
-  await prisma.user.deleteMany({});
+  // Criar Setores
+  const sectors = await prisma.sector.createMany({
+    data: [
+      { name: 'Sector 1' },
+      { name: 'Sector 2' },
+      { name: 'Sector 3' },
+    ],
+  });
+
+  const sectorIds = await prisma.sector
+    .findMany()
+    .then((sectors) => sectors.map((sector) => sector.id));
+
+  // Criar Posições de Funcionário
+  const positions = await prisma.employeePositions.createMany({
+    data: [
+      { name: 'Position 1' },
+      { name: 'Position 2' },
+      { name: 'Position 3' },
+    ],
+  });
+
+  const positionIds = await prisma.employeePositions
+    .findMany()
+    .then((positions) => positions.map((position) => position.id));
+
+  // Criar Códigos de Ativação
+  const activationCodes = await prisma.activationCode.createMany({
+    data: [
+      { code: 'ACTIVATION1' },
+      { code: 'ACTIVATION2' },
+      { code: 'ACTIVATION3' },
+    ],
+  });
+
+  const activationCodeIds = await prisma.activationCode
+    .findMany()
+    .then((codes) => codes.map((code) => code.id));
+
+  // Criar Grupos de Acesso
+  const accessGroups = await prisma.accessGroup.createMany({
+    data: [
+      { name: 'Group 1', screens: ['Screen1', 'Screen2'] },
+      { name: 'Group 2', screens: ['Screen3', 'Screen4'] },
+      { name: 'Group 3', screens: ['Screen5', 'Screen6'] },
+    ],
+  });
+
+  const accessGroupIds = await prisma.accessGroup
+    .findMany()
+    .then((groups) => groups.map((group) => group.id));
 
   // Criar Usuários
   const users = [];
@@ -131,6 +182,9 @@ async function main() {
       cpf: `0000000000${i}`,
       role: i <= 5 ? Role.ADMIN : Role.USER,
       tenantId: tenantIds[i % tenantIds.length],
+      sectorId: sectorIds[i % sectorIds.length],
+      employeePositionId: positionIds[i % positionIds.length],
+      activationCodeId: activationCodeIds[i % activationCodeIds.length],
       status: Status.ACTIVE,
     });
   }
@@ -140,14 +194,11 @@ async function main() {
     .findMany()
     .then((users) => users.map((user) => user.id));
 
-  // Limpar a tabela Movement antes de inserir novos registros
-  await prisma.movement.deleteMany({});
-
-  // Criar Movements
-  const movements = [];
+  // Criar Movimentos de Estoque
+  const stockManagements = [];
   for (let i = 1; i <= 100; i++) {
-    movements.push({
-      type: i % 2 === 0 ? MovementType.ENTRY : MovementType.EXIT,
+    stockManagements.push({
+      type: i % 2 === 0 ? StockManagementType.ENTRY : StockManagementType.EXIT,
       date: new Date(),
       quantity: Math.floor(Math.random() * 100),
       value: Math.random() * 100,
@@ -156,7 +207,7 @@ async function main() {
       tenantId: tenantIds[i % tenantIds.length],
     });
   }
-  await prisma.movement.createMany({ data: movements });
+  await prisma.stockManagement.createMany({ data: stockManagements });
 }
 
 main()

@@ -1,147 +1,3 @@
-/**
- * Registers a new user.
- * @route POST /register
- * @param req - The request object containing the user registration data.
- * @param res - The response object.
- * @returns The created user or an error message.
- */
-
-/**
- * Logs in a user.
- * @route POST /login
- * @param req - The request object containing the user login credentials.
- * @param res - The response object.
- * @returns A success message with the token and user data or an error message.
- */
-
-/**
- * Lists all users.
- * @route GET /users
- * @param req - The request object.
- * @param res - The response object.
- * @returns A list of all users.
- */
-
-/**
- * Fetches a user by email.
- * @route GET /user/:email
- * @param req - The request object containing the user email.
- * @param res - The response object.
- * @returns The user data or an error message.
- */
-
-/**
- * Updates a user by ID.
- * @route PATCH /user/:id
- * @param req - The request object containing the user ID and update data.
- * @param res - The response object.
- * @returns The updated user data or an error message.
- */
-
-/**
- * Deletes a user by ID.
- * @route DELETE /user/:id
- * @param req - The request object containing the user ID.
- * @param res - The response object.
- * @returns A success message or an error message.
- */
-
-/**
- * Lists all tenants.
- * @route GET /tenants
- * @param req - The request object.
- * @param res - The response object.
- * @returns A list of all tenants.
- */
-
-/**
- * Creates a new tenant.
- * @route POST /tenant
- * @param req - The request object containing the tenant data.
- * @param res - The response object.
- * @returns The created tenant or an error message.
- */
-
-/**
- * Updates a tenant by ID.
- * @route PATCH /tenant/:id
- * @param req - The request object containing the tenant ID and update data.
- * @param res - The response object.
- * @returns The updated tenant data or an error message.
- */
-
-/**
- * Deletes a tenant by ID.
- * @route DELETE /tenant/:id
- * @param req - The request object containing the tenant ID.
- * @param res - The response object.
- * @returns A success message or an error message.
- */
-
-/**
- * Lists all suppliers.
- * @route GET /suppliers
- * @param req - The request object.
- * @param res - The response object.
- * @returns A list of all suppliers.
- */
-
-/**
- * Creates a new supplier.
- * @route POST /supplier
- * @param req - The request object containing the supplier data.
- * @param res - The response object.
- * @returns The created supplier or an error message.
- */
-
-/**
- * Updates a supplier by ID.
- * @route PATCH /supplier/:id
- * @param req - The request object containing the supplier ID and update data.
- * @param res - The response object.
- * @returns The updated supplier data or an error message.
- */
-
-/**
- * Deletes a supplier by ID.
- * @route DELETE /supplier/:id
- * @param req - The request object containing the supplier ID.
- * @param res - The response object.
- * @returns A success message or an error message.
- */
-
-/**
- * Lists all products.
- * @route GET /products
- * @param req - The request object.
- * @param res - The response object.
- * @returns A list of all products.
- */
-
-/**
- * Creates a new product.
- * @route POST /product
- * @param req - The request object containing the product data.
- * @param res - The response object.
- * @returns The created product or an error message.
- */
-
-/**
- * Updates a product by ID.
- * @route PUT /product/:id
- * @param req - The request object containing the product ID and update data.
- * @param res - The response object.
- * @returns The updated product data or an error message.
- */
-
-/**
- * Deletes a product by ID.
- * @route DELETE /product/:id
- * @param req - The request object containing the product ID.
- * @param res - The response object.
- * @returns A success message or an error message.
- */
-
 import multer from 'multer';
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
@@ -182,12 +38,17 @@ interface CreateTenantRequestBody {
   contact: string;
 }
 
+
 const registerSchema = z.object({
-  email: z.string().email('Insira um email válido'),
-  cpf: z.string().length(11, 'O CPF deve ter 11 caracteres'),
-  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
-  name: z.string().min(1, 'O nome é obrigatório'),
-  tenantId: z.number().int().positive('O tenantId deve ser um número positivo'),
+  email: z.string().email(),
+  cpf: z.string().min(11).max(14), // Ajuste conforme necessário
+  password: z.string().min(6),
+  name: z.string().min(1, 'O nome é obrigatório'), // Nome obrigatório
+  tenantId: z.number(),
+  sectorId: z.number().min(1, 'O setor é obrigatório'), // Setor obrigatório
+  employeePositionId: z.number().min(1, 'A posição do funcionário é obrigatória'), // Posição do funcionário obrigatória
+  color: z.string().optional(),
+  activationCode: z.string(),
 });
 
 const loginSchema = z.object({
@@ -264,92 +125,24 @@ const productSchema = z.object({
   image: z.string().optional(),
 });
 
+const sectorSchema = z.object({
+  name: z.string().min(1, 'O nome é obrigatório'),
+});
 
+const employeePositionsSchema = z.object({
+  name: z.string().min(1, 'O nome é obrigatório'),
+});
 
-/**
- * @swagger
- * /auth/register:
- *   post:
- *     summary: Registra um novo usuário
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 description: O email do usuário
- *               cpf:
- *                 type: string
- *                 description: O CPF do usuário
- *               password:
- *                 type: string
- *                 format: password
- *                 description: A senha do usuário
- *               name:
- *                 type: string
- *                 description: O nome do usuário
- *               tenantId:
- *                 type: integer
- *                 description: O ID do tenant
- *             required:
- *               - email
- *               - cpf
- *               - password
- *               - name
- *               - tenantId
- *             example:
- *               email: "user@example.com"
- *               cpf: "10587421589"
- *               password: "teste0123"
- *               name: "string"
- *               tenantId: 78
- *     responses:
- *       200:
- *         description: Usuário registrado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 email:
- *                   type: string
- *                 cpf:
- *                   type: string
- *                 name:
- *                   type: string
- *                 tenantId:
- *                   type: string
- *       400:
- *         description: Dados inválidos
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 errors:
- *                   type: array
- *                   items:
- *                     type: object
- *       500:
- *         description: Erro ao registrar usuário
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                 details:
- *                   type: string
- */
+const activationCodeSchema = z.object({
+  code: z.string().min(1, 'O código é obrigatório'),
+  isActive: z.boolean().optional(),
+});
+
+const accessGroupSchema = z.object({
+  name: z.string().min(1, 'O nome é obrigatório'),
+  screens: z.array(z.string().min(1, 'O nome da tela é obrigatório')),
+});
+
 router.post(
   '/register',
   async (req: Request<{}, {}, RegisterRequestBody>, res: Response | any) => {
@@ -364,7 +157,7 @@ router.post(
         });
       }
 
-      const { email, cpf, password, name, tenantId } = parsedData.data;
+      const { email, cpf, password, name, tenantId, sectorId, employeePositionId, color, activationCode } = parsedData.data;
 
       // Verificar se o tenantId existe
       const tenant = await prisma.tenant.findUnique({
@@ -372,6 +165,14 @@ router.post(
       });
       if (!tenant) {
         return res.status(400).json({ error: 'Invalid tenantId' });
+      }
+
+      // Verificar se o código de ativação é válido e ativo
+      const activationCodeRecord = await prisma.activationCode.findUnique({
+        where: { code: activationCode },
+      });
+      if (!activationCodeRecord || !activationCodeRecord.isActive) {
+        return res.status(400).json({ error: 'Invalid or inactive activation code' });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -382,8 +183,19 @@ router.post(
           password: hashedPassword,
           name,
           tenantId,
+          sectorId,
+          employeePositionId, // Posição do funcionário obrigatória
+          color,
+          activationCodeId: activationCodeRecord.id,
         },
       });
+
+      // Desativar o código de ativação após o uso
+      await prisma.activationCode.update({
+        where: { id: activationCodeRecord.id },
+        data: { isActive: false },
+      });
+
       res.json(user);
     } catch (error: any) {
       console.error('Erro ao registrar usuário:', error);
@@ -463,73 +275,6 @@ router.get('/users', async (req: Request, res: Response) => {
   res.json(users);
 });
 
-/**
- * @swagger
- * /auth/users/pagination:
- *   get:
- *     summary: Lista todos os usuários com filtros, paginação, ordenação e seleção de campos
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Número da página
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Número de usuários por página
- *       - in: query
- *         name: sort
- *         schema:
- *           type: string
- *           default: id
- *         description: Campo para ordenação
- *       - in: query
- *         name: order
- *         schema:
- *           type: string
- *           enum: [asc, desc]
- *           default: asc
- *         description: Ordem de ordenação
- *       - in: query
- *         name: fields
- *         schema:
- *           type: string
- *         description: Campos a serem selecionados, separados por vírgula
- *       - in: query
- *         name: filters
- *         schema:
- *           type: object
- *         description: Filtros para busca
- *     responses:
- *       200:
- *         description: Lista de usuários
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                 meta:
- *                   type: object
- *                   properties:
- *                     total:
- *                       type: integer
- *                     page:
- *                       type: integer
- *                     limit:
- *                       type: integer
- *                     totalPages:
- *                       type: integer
- *       500:
- *         description: Erro ao buscar usuários
- */
 router.get('/users/pagination', async (req: Request, res: Response) => {
   const {
     page = 1,
@@ -892,5 +637,100 @@ router.delete(
     res.json({ message: 'Product deletado com sucesso' });
   },
 );
+
+// Adicionando a rota GET para listar todos os setores
+router.get('/sectors', async (req: Request, res: Response) => {
+  const sectors = await prisma.sector.findMany();
+  res.json(sectors);
+});
+// Adicionando a rota POST para criar um setor
+router.post('/sector', async (req: Request, res: Response | any) => {
+  const parsedData = sectorSchema.safeParse(req.body);
+  if (!parsedData.success) {
+    return res
+      .status(400)
+      .json({ message: 'Dados inválidos', errors: parsedData.error.errors });
+  }
+  const sector = await prisma.sector.create({ data: parsedData.data });
+  res.json(sector);
+});
+
+// Adicionando a rota DELETE para deletar um setor
+router.delete('/sector/:id', async (req: Request<{ id: string }>, res: Response) => {
+  await prisma.sector.delete({ where: { id: Number(req.params.id) } });
+  res.json({ message: 'Setor deletado com sucesso' });
+});
+
+// Adicionando a rota GET para listar todos os cargos
+router.get('/employeePositionss', async (req: Request, res: Response) => {
+  const employeePositionss = await prisma.employeePositions.findMany();
+  res.json(employeePositionss);
+});
+
+// Adicionando a rota POST para criar um cargo
+router.post('/employeePositions', async (req: Request, res: Response | any) => {
+  const parsedData = employeePositionsSchema.safeParse(req.body);
+  if (!parsedData.success) {
+    return res
+      .status(400)
+      .json({ message: 'Dados inválidos', errors: parsedData.error.errors });
+  }
+  const employeePositions = await prisma.employeePositions.create({ data: parsedData.data });
+  res.json(employeePositions);
+});
+
+// Adicionando a rota DELETE para deletar um cargo
+router.delete('/employeePositions/:id', async (req: Request<{ id: string }>, res: Response) => {
+  await prisma.employeePositions.delete({ where: { id: Number(req.params.id) } });
+  res.json({ message: 'Cargo deletado com sucesso' });
+});
+
+// Adicionando a rota GET para listar todos os códigos de ativação
+router.get('/activation-codes', async (req: Request, res: Response) => {
+  const activationCodes = await prisma.activationCode.findMany();
+  res.json(activationCodes);
+});
+
+// Adicionando a rota POST para criar um código de ativação
+router.post('/activation-code', async (req: Request, res: Response | any) => {
+  const parsedData = activationCodeSchema.safeParse(req.body);
+  if (!parsedData.success) {
+    return res
+      .status(400)
+      .json({ message: 'Dados inválidos', errors: parsedData.error.errors });
+  }
+  const activationCode = await prisma.activationCode.create({ data: parsedData.data });
+  res.json(activationCode);
+});
+
+// Adicionando a rota DELETE para deletar um código de ativação
+router.delete('/activation-code/:id', async (req: Request<{ id: string }>, res: Response) => {
+  await prisma.activationCode.delete({ where: { id: Number(req.params.id) } });
+  res.json({ message: 'Código de ativação deletado com sucesso' });
+});
+
+// Adicionando a rota GET para listar todos os grupos de acesso
+router.get('/access-groups', async (req: Request, res: Response) => {
+  const accessGroups = await prisma.accessGroup.findMany();
+  res.json(accessGroups);
+});
+
+// Adicionando a rota POST para criar um grupo de acesso
+router.post('/access-group', async (req: Request, res: Response | any) => {
+  const parsedData = accessGroupSchema.safeParse(req.body);
+  if (!parsedData.success) {
+    return res
+      .status(400)
+      .json({ message: 'Dados inválidos', errors: parsedData.error.errors });
+  }
+  const accessGroup = await prisma.accessGroup.create({ data: parsedData.data });
+  res.json(accessGroup);
+});
+
+// Adicionando a rota DELETE para deletar um grupo de acesso
+router.delete('/access-group/:id', async (req: Request<{ id: string }>, res: Response) => {
+  await prisma.accessGroup.delete({ where: { id: Number(req.params.id) } });
+  res.json({ message: 'Grupo de acesso deletado com sucesso' });
+});
 
 export default router;
