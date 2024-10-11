@@ -1,12 +1,12 @@
 {
   "name": "backend",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/application/server/App.js",
   "scripts": {
     "test": "jest",
-    "dev": "ts-node src/index.ts",
-    "start": "node dist/index.js",
+    "dev": "ts-node src/application/server/App.ts",
+    "start": "node dist/application/server/App.js",
     "build": "tsc",
     "prisma:init": "prisma init",
     "prisma:generate": "prisma generate",

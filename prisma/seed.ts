@@ -1,5 +1,6 @@
-import { PrismaClient, Role, Status, StockManagementType } from '@prisma/client';
+import { PrismaClient, Status, StockManagementType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { encrypt } from '../src/infrastructure/crypto/crypto';
 
 const prisma = new PrismaClient();
 
@@ -11,36 +12,37 @@ async function main() {
   await prisma.supplier.deleteMany({});
   await prisma.tenant.deleteMany({});
   await prisma.sector.deleteMany({});
-  await prisma.employeePositions.deleteMany({});
+  await prisma.positions.deleteMany({});
   await prisma.activationCode.deleteMany({});
   await prisma.accessGroup.deleteMany({});
+  await prisma.permission.deleteMany({});
+  await prisma.address.deleteMany({});
+  await prisma.employee.deleteMany({});
+  await prisma.manufacturer.deleteMany({});
 
   // Criar Tenants
   const tenants = await prisma.tenant.createMany({
     data: [
       {
-        name: 'Tenant 1',
-        cnpj: '12345678000101',
-        address: 'Address 1',
-        phone: '1234567890',
-        email: 'tenant1@example.com',
-        contact: 'Contact 1',
+        name: encrypt('Tenant 1'),
+        cnpj: encrypt('12345678000101'),
+        email: encrypt('tenant1@example.com'),
+        address: encrypt('Address 1'),
+        contact: encrypt('Contact 1'),
       },
       {
-        name: 'Tenant 2',
-        cnpj: '12345678000102',
-        address: 'Address 2',
-        phone: '1234567891',
-        email: 'tenant2@example.com',
-        contact: 'Contact 2',
+        name: encrypt('Tenant 2'),
+        cnpj: encrypt('12345678000102'),
+        email: encrypt('tenant2@example.com'),
+        address: encrypt('Address 2'),
+        contact: encrypt('Contact 2'),
       },
       {
-        name: 'Tenant 3',
-        cnpj: '12345678000103',
-        address: 'Address 3',
-        phone: '1234567892',
-        email: 'tenant3@example.com',
-        contact: 'Contact 3',
+        name: encrypt('Tenant 3'),
+        cnpj: encrypt('12345678000103'),
+        email: encrypt('tenant3@example.com'),
+        address: encrypt('Address 3'),
+        contact: encrypt('Contact 3'),
       },
     ],
   });
@@ -49,48 +51,66 @@ async function main() {
     .findMany()
     .then((tenants) => tenants.map((tenant) => tenant.id));
 
+  // Criar Endereços
+  const addresses = await prisma.address.createMany({
+    data: [
+      { cep: '12345678', street: 'Street 1', neighborhood: 'Neighborhood 1', number: '1', city: 'City 1', state: 'State 1', country: 'Brasil' },
+      { cep: '12345679', street: 'Street 2', neighborhood: 'Neighborhood 2', number: '2', city: 'City 2', state: 'State 2', country: 'Brasil' },
+      { cep: '12345680', street: 'Street 3', neighborhood: 'Neighborhood 3', number: '3', city: 'City 3', state: 'State 3', country: 'Brasil' },
+    ],
+  });
+
+  const addressIds = await prisma.address
+    .findMany()
+    .then((addresses) => addresses.map((address) => address.id));
+
   // Criar Suppliers
   const suppliers = await prisma.supplier.createMany({
     data: [
       {
-        name: 'Supplier 1',
-        cnpj: '22345678000101',
-        address: 'Supplier Address 1',
-        phone: '2234567890',
-        email: 'supplier1@example.com',
-        contact: 'Supplier Contact 1',
+        name: encrypt('Supplier 1'),
+        cnpj: encrypt('22345678000101'),
+        phone: encrypt('2234567890'),
+        email: encrypt('supplier1@example.com'),
+        contact: encrypt('Supplier Contact 1'),
+        addressId: addressIds[0],
+        tenantId: tenantIds[0],
       },
       {
-        name: 'Supplier 2',
-        cnpj: '22345678000102',
-        address: 'Supplier Address 2',
-        phone: '2234567891',
-        email: 'supplier2@example.com',
-        contact: 'Supplier Contact 2',
+        name: encrypt('Supplier 2'),
+        cnpj: encrypt('22345678000102'),
+        phone: encrypt('2234567891'),
+        email: encrypt('supplier2@example.com'),
+        contact: encrypt('Supplier Contact 2'),
+        addressId: addressIds[1],
+        tenantId: tenantIds[1],
       },
       {
-        name: 'Supplier 3',
-        cnpj: '22345678000103',
-        address: 'Supplier Address 3',
-        phone: '2234567892',
-        email: 'supplier3@example.com',
-        contact: 'Supplier Contact 3',
+        name: encrypt('Supplier 3'),
+        cnpj: encrypt('22345678000103'),
+        phone: encrypt('2234567892'),
+        email: encrypt('supplier3@example.com'),
+        contact: encrypt('Supplier Contact 3'),
+        addressId: addressIds[2],
+        tenantId: tenantIds[2],
       },
       {
-        name: 'Supplier 4',
-        cnpj: '22345678000104',
-        address: 'Supplier Address 4',
-        phone: '2234567893',
-        email: 'supplier4@example.com',
-        contact: 'Supplier Contact 4',
+        name: encrypt('Supplier 4'),
+        cnpj: encrypt('22345678000104'),
+        phone: encrypt('2234567893'),
+        email: encrypt('supplier4@example.com'),
+        contact: encrypt('Supplier Contact 4'),
+        addressId: addressIds[0],
+        tenantId: tenantIds[0],
       },
       {
-        name: 'Supplier 5',
-        cnpj: '22345678000105',
-        address: 'Supplier Address 5',
-        phone: '2234567894',
-        email: 'supplier5@example.com',
-        contact: 'Supplier Contact 5',
+        name: encrypt('Supplier 5'),
+        cnpj: encrypt('22345678000105'),
+        phone: encrypt('2234567894'),
+        email: encrypt('supplier5@example.com'),
+        contact: encrypt('Supplier Contact 5'),
+        addressId: addressIds[1],
+        tenantId: tenantIds[1],
       },
     ],
   });
@@ -103,14 +123,15 @@ async function main() {
   const products = [];
   for (let i = 1; i <= 50; i++) {
     products.push({
-      name: `Product ${i}`,
-      description: `Description for product ${i}`,
+      name: encrypt(`Product ${i}`),
+      description: encrypt(`Description for product ${i}`),
       price: Math.random() * 100,
       supplierId: supplierIds[i % supplierIds.length],
-      brand: `Brand ${i}`,
-      unit: `Unit ${i}`,
+      brand: encrypt(`Brand ${i}`),
+      unit: encrypt(`Unit ${i}`),
       quantity: Math.floor(Math.random() * 100),
       tenantId: tenantIds[i % tenantIds.length],
+      manufacturerId: tenantIds[i % tenantIds.length], // Ajuste conforme necessário
     });
   }
   await prisma.product.createMany({ data: products });
@@ -122,9 +143,9 @@ async function main() {
   // Criar Setores
   const sectors = await prisma.sector.createMany({
     data: [
-      { name: 'Sector 1' },
-      { name: 'Sector 2' },
-      { name: 'Sector 3' },
+      { name: encrypt('Sector 1'), tenantId: tenantIds[0] },
+      { name: encrypt('Sector 2'), tenantId: tenantIds[1] },
+      { name: encrypt('Sector 3'), tenantId: tenantIds[2] },
     ],
   });
 
@@ -133,24 +154,24 @@ async function main() {
     .then((sectors) => sectors.map((sector) => sector.id));
 
   // Criar Posições de Funcionário
-  const positions = await prisma.employeePositions.createMany({
+  const positions = await prisma.positions.createMany({
     data: [
-      { name: 'Position 1' },
-      { name: 'Position 2' },
-      { name: 'Position 3' },
+      { name: encrypt('Position 1'), tenantId: tenantIds[0] },
+      { name: encrypt('Position 2'), tenantId: tenantIds[1] },
+      { name: encrypt('Position 3'), tenantId: tenantIds[2] },
     ],
   });
 
-  const positionIds = await prisma.employeePositions
+  const positionIds = await prisma.positions
     .findMany()
     .then((positions) => positions.map((position) => position.id));
 
   // Criar Códigos de Ativação
   const activationCodes = await prisma.activationCode.createMany({
     data: [
-      { code: 'ACTIVATION1' },
-      { code: 'ACTIVATION2' },
-      { code: 'ACTIVATION3' },
+      { code: encrypt('ACTIVATION1'), tenantId: tenantIds[0] },
+      { code: encrypt('ACTIVATION2'), tenantId: tenantIds[1] },
+      { code: encrypt('ACTIVATION3'), tenantId: tenantIds[2] },
     ],
   });
 
@@ -161,9 +182,9 @@ async function main() {
   // Criar Grupos de Acesso
   const accessGroups = await prisma.accessGroup.createMany({
     data: [
-      { name: 'Group 1', screens: ['Screen1', 'Screen2'] },
-      { name: 'Group 2', screens: ['Screen3', 'Screen4'] },
-      { name: 'Group 3', screens: ['Screen5', 'Screen6'] },
+      { name: encrypt('Group 1'), tenantId: tenantIds[0] },
+      { name: encrypt('Group 2'), tenantId: tenantIds[1] },
+      { name: encrypt('Group 3'), tenantId: tenantIds[2] },
     ],
   });
 
@@ -171,19 +192,36 @@ async function main() {
     .findMany()
     .then((groups) => groups.map((group) => group.id));
 
+  // Criar Permissões
+  const permissions = await prisma.permission.createMany({
+    data: [
+      { name: 'Permission 1', url: '/url1', label: 'Label 1', listChecked: true, createChecked: true, updateChecked: true, deleteChecked: true, hasListOption: true, hasDeleteOption: true, hasCreateOption: true, hasUpdateOption: true, accessGroupId: accessGroupIds[0] },
+      { name: 'Permission 2', url: '/url2', label: 'Label 2', listChecked: true, createChecked: true, updateChecked: true, deleteChecked: true, hasListOption: true, hasDeleteOption: true, hasCreateOption: true, hasUpdateOption: true, accessGroupId: accessGroupIds[1] },
+      { name: 'Permission 3', url: '/url3', label: 'Label 3', listChecked: true, createChecked: true, updateChecked: true, deleteChecked: true, hasListOption: true, hasDeleteOption: true, hasCreateOption: true, hasUpdateOption: true, accessGroupId: accessGroupIds[2] },
+    ],
+  });
+
+  // Criar Funcionários
+  const employees = await prisma.employee.createMany({
+    data: [
+      { cpf: encrypt('00000000001'), userId: 1, addressId: addressIds[0], tenantId: tenantIds[0] },
+      { cpf: encrypt('00000000002'), userId: 2, addressId: addressIds[1], tenantId: tenantIds[1] },
+      { cpf: encrypt('00000000003'), userId: 3, addressId: addressIds[2], tenantId: tenantIds[2] },
+    ],
+  });
+
   // Criar Usuários
   const users = [];
   const hashedPassword = await bcrypt.hash('password', 10);
   for (let i = 1; i <= 50; i++) {
     users.push({
-      email: `user${i}@example.com`,
+      email: encrypt(`user${i}@example.com`),
       password: hashedPassword,
-      name: `User ${i}`,
-      cpf: `0000000000${i}`,
-      role: i <= 5 ? Role.ADMIN : Role.USER,
+      name: encrypt(`User ${i}`),
+      cpf: encrypt(`0000000000${i}`),
       tenantId: tenantIds[i % tenantIds.length],
       sectorId: sectorIds[i % sectorIds.length],
-      employeePositionId: positionIds[i % positionIds.length],
+      positionId: positionIds[i % positionIds.length],
       activationCodeId: activationCodeIds[i % activationCodeIds.length],
       status: Status.ACTIVE,
     });
