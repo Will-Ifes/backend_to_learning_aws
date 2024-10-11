@@ -23,20 +23,28 @@ model Tenant {
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
-  email             String    @unique
-  password          String
-  name              String?
-  cpf               String    @unique
-  dateOfBirth       DateTime?
+  id                 Int        @id @default(autoincrement())
+  email              String     @unique
+  password           String
+  name               String?
+  cpf                String     @unique
+  dateOfBirth        DateTime?
   dailyExposureHours Int?
-  role              Role      @default(USER)
-  tenantId          Int
-  Tenant            Tenant    @relation(fields: [tenantId], references: [id])
-  status            Status    @default(ACTIVE)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  Movements         Movement[]
+  role               Role       @default(USER)
+  tenantId           Int
+  Tenant             Tenant     @relation(fields: [tenantId], references: [id])
+  status             Status     @default(ACTIVE)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  Movements          Movement[]
+  sectorId           Int?
+  Sector             Sector?    @relation(fields: [sectorId], references: [id])
+  positionId         Int?
+  Position           EmployeePositions?  @relation(fields: [positionId], references: [id])
+  activationCodeId   Int?
+  ActivationCode     ActivationCode? @relation(fields: [activationCodeId], references: [id])
+  color              String?
+  AccessGroups       AccessGroup[]
 }
 
 model Supplier {
@@ -84,6 +92,40 @@ model Movement {
   Tenant      Tenant    @relation(fields: [tenantId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Sector {
+  id        Int       @id @default(autoincrement())
+  name      String
+  users     User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model EmployeePositions {
+  id        Int       @id @default(autoincrement())
+  name      String
+  users     User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model ActivationCode {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique
+  isActive  Boolean   @default(true)
+  users     User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model AccessGroup {
+  id        Int       @id @default(autoincrement())
+  name      String
+  users     User[]
+  screens   String[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 enum Role {
