@@ -207,6 +207,9 @@ model Permission {
   hasDeleteOption    Boolean             
   hasCreateOption    Boolean             
   hasUpdateOption    Boolean             
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
   accessGroupId      Int
   AccessGroup        AccessGroup @relation(fields: [accessGroupId], references: [id])
 }
