@@ -11,11 +11,11 @@ export const getAddress = async (id: number): Promise<Address | null> => {
   return await addressRepository.getById(id);
 };
 
-export const createNewAddress = async (data: Address): Promise<Address> => {
+export const createNewAddress = async (data: Omit<Address, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<Address> => {
   return await addressRepository.create(data);
 };
 
-export const updateExistingAddress = async (id: number, data: Address): Promise<Address> => {
+export const updateExistingAddress = async (id: number, data: Partial<Omit<Address, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<Address> => {
   return await addressRepository.update(id, data);
 };
 

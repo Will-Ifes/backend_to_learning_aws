@@ -11,11 +11,11 @@ export const getStockManagement = async (id: number): Promise<StockManagement | 
   return await stockManagementRepository.getById(id);
 };
 
-export const createNewStockManagement = async (data: StockManagement): Promise<StockManagement> => {
+export const createNewStockManagement = async (data: Omit<StockManagement, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<StockManagement> => {
   return await stockManagementRepository.create(data);
 };
 
-export const updateExistingStockManagement = async (id: number, data: StockManagement): Promise<StockManagement> => {
+export const updateExistingStockManagement = async (id: number, data: Partial<Omit<StockManagement, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<StockManagement> => {
   return await stockManagementRepository.update(id, data);
 };
 

@@ -26,9 +26,13 @@ export class ActivationCodeRepository {
       ...data,
       code: encrypt(data.code),
     };
-    return await prisma.activationCode.create({
+    const createdActivationCode = await prisma.activationCode.create({
       data: encryptedData,
     });
+    return {
+      ...createdActivationCode,
+      code: decrypt(createdActivationCode.code),
+    };
   }
 
   async update(id: number, data: Partial<Omit<ActivationCode, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<ActivationCode> {
@@ -36,15 +40,23 @@ export class ActivationCodeRepository {
       ...data,
       code: data.code ? encrypt(data.code) : undefined,
     };
-    return await prisma.activationCode.update({
+    const updatedActivationCode = await prisma.activationCode.update({
       where: { id },
       data: encryptedData,
     });
+    return {
+      ...updatedActivationCode,
+      code: decrypt(updatedActivationCode.code),
+    };
   }
 
   async delete(id: number): Promise<ActivationCode> {
-    return await prisma.activationCode.delete({
+    const deletedActivationCode = await prisma.activationCode.delete({
       where: { id },
     });
+    return {
+      ...deletedActivationCode,
+      code: decrypt(deletedActivationCode.code),
+    };
   }
 }

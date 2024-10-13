@@ -1,11 +1,13 @@
 export interface Supplier {
   id: number;
   name: string;
-  contactEmail: string;
-  contactPhone: string;
-  address: string;
+  cnpj: string;
+  phone: string;
+  email: string;
+  contact: string;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
+  addressId: number;
   tenantId: number;
 }

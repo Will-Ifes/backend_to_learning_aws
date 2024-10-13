@@ -11,11 +11,11 @@ export const getManufacturer = async (id: number): Promise<Manufacturer | null> 
   return await manufacturerRepository.getById(id);
 };
 
-export const createNewManufacturer = async (data: Manufacturer): Promise<Manufacturer> => {
+export const createNewManufacturer = async (data: Omit<Manufacturer, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<Manufacturer> => {
   return await manufacturerRepository.create(data);
 };
 
-export const updateExistingManufacturer = async (id: number, data: Manufacturer): Promise<Manufacturer> => {
+export const updateExistingManufacturer = async (id: number, data: Partial<Omit<Manufacturer, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<Manufacturer> => {
   return await manufacturerRepository.update(id, data);
 };
 

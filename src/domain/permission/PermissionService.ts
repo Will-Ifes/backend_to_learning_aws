@@ -11,11 +11,11 @@ export const getPermission = async (id: number): Promise<Permission | null> => {
   return await permissionRepository.getById(id);
 };
 
-export const createNewPermission = async (data: Permission): Promise<Permission> => {
+export const createNewPermission = async (data: Omit<Permission, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<Permission> => {
   return await permissionRepository.create(data);
 };
 
-export const updateExistingPermission = async (id: number, data: Permission): Promise<Permission> => {
+export const updateExistingPermission = async (id: number, data: Partial<Omit<Permission, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<Permission> => {
   return await permissionRepository.update(id, data);
 };
 

@@ -1,8 +1,8 @@
 export interface AccessGroup {
-  id: number | null;
-  name: string | null;
-  createdAt: Date | null;
-  updatedAt: Date | null | null;
-  deletedAt?: Date |  null;
-  tenantId: number | null;
+  id: number;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date | null;
+  tenantId: number;
 }

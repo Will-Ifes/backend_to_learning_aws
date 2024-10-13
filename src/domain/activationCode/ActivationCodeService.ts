@@ -11,11 +11,11 @@ export const getActivationCode = async (id: number): Promise<ActivationCode | nu
   return await activationCodeRepository.getById(id);
 };
 
-export const createNewActivationCode = async (data: ActivationCode): Promise<ActivationCode> => {
+export const createNewActivationCode = async (data: Omit<ActivationCode, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<ActivationCode> => {
   return await activationCodeRepository.create(data);
 };
 
-export const updateExistingActivationCode = async (id: number, data: ActivationCode): Promise<ActivationCode> => {
+export const updateExistingActivationCode = async (id: number, data: Partial<Omit<ActivationCode, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<ActivationCode> => {
   return await activationCodeRepository.update(id, data);
 };
 

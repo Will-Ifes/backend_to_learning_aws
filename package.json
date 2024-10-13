@@ -2,11 +2,11 @@
   "name": "backend",
   "version": "0.1.0",
   "description": "",
-  "main": "dist/application/server/App.js",
+  "main": "dist/application/server/Server.js",
   "scripts": {
     "test": "jest",
-    "dev": "ts-node src/application/server/App.ts",
-    "start": "node dist/application/server/App.js",
+    "dev": "ts-node src/application/server/Server.ts",
+    "start": "node dist/application/server/Server.js",
     "build": "tsc",
     "prisma:init": "prisma init",
     "prisma:generate": "prisma generate",
@@ -23,6 +23,7 @@
   "author": "Will-Ifes",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^9.0.3",
     "@prisma/client": "^5.20.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -32,6 +33,7 @@
     "multer": "1.4.5-lts.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "winston": "^3.15.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

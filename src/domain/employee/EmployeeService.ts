@@ -11,11 +11,11 @@ export const getEmployee = async (id: number): Promise<Employee | null> => {
   return await employeeRepository.getById(id);
 };
 
-export const createNewEmployee = async (data: Employee): Promise<Employee> => {
+export const createNewEmployee = async (data: Omit<Employee, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<Employee> => {
   return await employeeRepository.create(data);
 };
 
-export const updateExistingEmployee = async (id: number, data: Employee): Promise<Employee> => {
+export const updateExistingEmployee = async (id: number, data: Partial<Omit<Employee, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<Employee> => {
   return await employeeRepository.update(id, data);
 };
 

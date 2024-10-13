@@ -11,11 +11,11 @@ export const getProduct = async (id: number): Promise<Product | null> => {
   return await productRepository.getById(id);
 };
 
-export const createNewProduct = async (data: Product): Promise<Product> => {
+export const createNewProduct = async (data: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<Product> => {
   return await productRepository.create(data);
 };
 
-export const updateExistingProduct = async (id: number, data: Product): Promise<Product> => {
+export const updateExistingProduct = async (id: number, data: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<Product> => {
   return await productRepository.update(id, data);
 };
 

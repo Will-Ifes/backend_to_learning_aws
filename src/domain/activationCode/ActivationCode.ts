@@ -4,6 +4,6 @@ export interface ActivationCode {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   tenantId: number;
 }

@@ -1,10 +1,13 @@
 export interface StockManagement {
   id: number;
-  productId: number;
+  type: "ENTRY" | "EXIT";
+  date: Date;
   quantity: number;
-  location: string;
+  value: number;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
+  productId: number;
+  userId: number;
   tenantId: number;
 }

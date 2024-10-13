@@ -1,12 +1,13 @@
 export interface Address {
   id: number;
+  cep: string;
   street: string;
+  neighborhood: string;
+  number: string;
   city: string;
   state: string;
   country: string;
-  postalCode: string;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt?: Date;
-  tenantId: number;
+  deletedAt?: Date | null;
 }

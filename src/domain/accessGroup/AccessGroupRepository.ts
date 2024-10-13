@@ -26,9 +26,13 @@ export class AccessGroupRepository {
       ...data,
       name: encrypt(data.name),
     };
-    return await prisma.accessGroup.create({
+    const createdAccessGroup = await prisma.accessGroup.create({
       data: encryptedData,
     });
+    return {
+      ...createdAccessGroup,
+      name: decrypt(createdAccessGroup.name),
+    };
   }
 
   async update(id: number, data: Partial<Omit<AccessGroup, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<AccessGroup> {
@@ -36,15 +40,23 @@ export class AccessGroupRepository {
       ...data,
       name: data.name ? encrypt(data.name) : undefined,
     };
-    return await prisma.accessGroup.update({
+    const updatedAccessGroup = await prisma.accessGroup.update({
       where: { id },
       data: encryptedData,
     });
+    return {
+      ...updatedAccessGroup,
+      name: decrypt(updatedAccessGroup.name),
+    };
   }
 
   async delete(id: number): Promise<AccessGroup> {
-    return await prisma.accessGroup.delete({
+    const deletedAccessGroup = await prisma.accessGroup.delete({
       where: { id },
     });
+    return {
+      ...deletedAccessGroup,
+      name: decrypt(deletedAccessGroup.name),
+    };
   }
 }

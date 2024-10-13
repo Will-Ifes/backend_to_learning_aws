@@ -1,9 +1,8 @@
-export interface Position {
+export interface Positions {
   id: number;
-  title: string;
-  description: string;
+  name: string;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   tenantId: number;
 }

@@ -1,108 +1,251 @@
-# Projeto Base
+# Backend Base Wert
 
-## Introdução
+## Visão Geral
 
-Este projeto é uma aplicação backend que utiliza Express e PostgreSQL, gerenciado pelo Prisma. Abaixo estão as instruções para configurar o ambiente, inserir dados de teste, executar o backend, e utilizar as rotas disponíveis.
+Este é o backend do projeto Wert, construído com Node.js, Express, TypeScript e Prisma. Ele fornece uma API RESTful para gerenciar várias entidades, incluindo usuários, empresas, produtos, fornecedores, endereços entre outros.
 
-## Configuração do Ambiente
+## Estrutura do Projeto
 
-1. **Instale o PostgreSQL**:
+```plaintext
+backend-base-wert/
+├── prisma/
+│   ├── migrations/
+│   ├── schema.prisma
+│   └── seed.ts
+├── src/
+│   ├── application/
+│   │   ├── server/
+│   │   │   ├── App.ts
+│   │   │   └── Server.ts
+│   │   ├── middlewares/
+│   │   │   └── AuthMiddleware.ts
+│   │   ├── routes/
+│   │   │   ├── AccessGroupRoutes.ts
+│   │   │   ├── AddressRoutes.ts
+│   │   │   ├── EmployeeRoutes.ts
+│   │   │   ├── PermissionRoutes.ts
+│   │   │   ├── PositionsRoutes.ts
+│   │   │   ├── ProductRoutes.ts
+│   │   │   ├── SectorRoutes.ts
+│   │   │   ├── StockManagementRoutes.ts
+│   │   │   ├── SupplierRoutes.ts
+│   │   │   ├── TenantRoutes.ts
+│   │   │   └── UserRoutes.ts
+│   ├── domain/
+│   │   ├── accessGroup/
+│   │   │   ├── AccessGroup.ts
+│   │   │   ├── AccessGroupService.ts
+│   │   │   ├── AccessGroupRepository.ts
+│   │   │   └── AccessGroupController.ts
+│   │   ├── address/
+│   │   │   ├── Address.ts
+│   │   │   ├── AddressService.ts
+│   │   │   ├── AddressRepository.ts
+│   │   │   └── AddressController.ts
+│   │   ├── employee/
+│   │   │   ├── Employee.ts
+│   │   │   ├── EmployeeService.ts
+│   │   │   ├── EmployeeRepository.ts
+│   │   │   └── EmployeeController.ts
+│   │   ├── permission/
+│   │   │   ├── Permission.ts
+│   │   │   ├── PermissionService.ts
+│   │   │   ├── PermissionRepository.ts
+│   │   │   └── PermissionController.ts
+│   │   ├── positions/
+│   │   │   ├── Positions.ts
+│   │   │   ├── PositionsService.ts
+│   │   │   ├── PositionsRepository.ts
+│   │   │   └── PositionsController.ts
+│   │   ├── product/
+│   │   │   ├── Product.ts
+│   │   │   ├── ProductService.ts
+│   │   │   ├── ProductRepository.ts
+│   │   │   └── ProductController.ts
+│   │   ├── sector/
+│   │   │   ├── Sector.ts
+│   │   │   ├── SectorService.ts
+│   │   │   ├── SectorRepository.ts
+│   │   │   └── SectorController.ts
+│   │   ├── stockManagement/
+│   │   │   ├── StockManagement.ts
+│   │   │   ├── StockManagementService.ts
+│   │   │   ├── StockManagementRepository.ts
+│   │   │   └── StockManagementController.ts
+│   │   ├── supplier/
+│   │   │   ├── Supplier.ts
+│   │   │   ├── SupplierService.ts
+│   │   │   ├── SupplierRepository.ts
+│   │   │   └── SupplierController.ts
+│   │   ├── tenant/
+│   │   │   ├── Tenant.ts
+│   │   │   ├── TenantService.ts
+│   │   │   ├── TenantRepository.ts
+│   │   │   └── TenantController.ts
+│   │   ├── user/
+│   │   │   ├── User.ts
+│   │   │   ├── UserService.ts
+│   │   │   ├── UserRepository.ts
+│   │   │   └── UserController.ts
+│   ├── infrastructure/
+│   │   ├── bcrypt/
+│   │   │   └── Bcrypt.ts
+│   │   ├── crypto/
+│   │   │   └── Crypto.ts
+│   │   ├── logger/
+│   │   │   ├── Logger.ts
+│   │   │   └── LoggerFactory.ts
+│   │   └── prisma/
+│   │       └── PrismaClient.ts
+│   ├── middlewares/
+│   │   └── AuthMiddleware.ts
+│   ├── models/
+│   │   ├── AccessGroup.ts
+│   │   ├── Address.ts
+│   │   ├── Employee.ts
+│   │   ├── Permission.ts
+│   │   ├── Positions.ts
+│   │   ├── Product.ts
+│   │   ├── Sector.ts
+│   │   ├── StockManagement.ts
+│   │   ├── Supplier.ts
+│   │   ├── Tenant.ts
+│   │   └── User.ts
+│   └── tests/
+│       └── auth.test.ts
+├── .env
+├── .eslintrc.json
+├── .gitignore
+├── .prettierrc
+├── jest.config.js
+├── package.json
+├── README.md
+└── tsconfig.json
+```
 
-   - Certifique-se de que o PostgreSQL está instalado na sua máquina.
+## Instalação
 
-2. **Configure o Banco de Dados**:
-
-   - Crie um banco de dados chamado `bancscccobase`.
-
-   ```sql
-   CREATE DATABASE bancscccobase;
+1. Clone o repositório:
+   ```sh
+   git clone https://github.com/Will-Ifes/backend-base-wert.git
+   cd backend-base-wert
    ```
 
-3. **Configuração do Arquivo .env**:
-
-   - Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
-
-   - exemplo
-
-   ```env
-   DATABASE_URL="postgresql://chapolin:senha@localhost:5300/bancscccobase?schema=public"
-   JWT_SECRET="sua_chave_secreta"
+2. Instale as dependências:
+   ```sh
+   pnpm install
    ```
 
-4. **Instale as Dependências**:
+3. Configure o arquivo `.env` com as variáveis de ambiente necessárias.
 
-   - Execute o comando abaixo para instalar as dependências do projeto.
-
-   ```bash
-   npm install
+4. Inicialize o Prisma:
+   ```sh
+   pnpm run prisma:init
    ```
 
-5. **Execute as Migrações do Prisma**:
-
-   - Execute o comando abaixo para aplicar as migrações do Prisma e criar as tabelas no banco de dados.
-
-   ```bash
-   npx prisma migrate dev --name init
+5. Gere o cliente Prisma:
+   ```sh
+   pnpm run prisma:generate
    ```
 
-6. **Iniciar o Servidor**:
-
-   - Execute o comando abaixo para iniciar o servidor.
-
-   ```bash
-   npm start
+6. Execute as migrações do Prisma:
+   ```sh
+   pnpm run prisma:migrate
    ```
 
-   O backend estará rodando em [http://localhost:3001](http://localhost:3001).
+7. Popule o banco de dados com dados iniciais (opcional):
+   ```sh
+   pnpm run prisma:seed
+   ```
 
-## Rotas Disponíveis
+## Uso
 
-### Autenticação
+### Desenvolvimento
 
-- **Registrar Usuário**: `POST /auth/register`
+Para iniciar o servidor em modo de desenvolvimento:
+```sh
+pnpm run dev
+```
 
-  ```json
-  Body: { "email": "string", "password": "string", "name": "string", "tenantId": "number" }
-  ```
+### Produção
 
-- **Login**: `POST /auth/login`
+Para construir e iniciar o servidor em modo de produção:
+```sh
+pnpm run build
+pnpm start
+```
 
-  ```json
-  Body: { "email": "string", "password": "string" }
-  ```
+### Testes
 
-### Usuários
+Para executar os testes:
+```sh
+pnpm test
+```
 
-- **Listar Todos os Usuários**: `GET /auth/users`
-- **Buscar Usuário por Email**: `GET /auth/user/:email`
+### Linting
 
-### Tenants
+Para verificar o código com ESLint:
+```sh
+pnpm run lint
+```
 
-- **Listar Todos os Tenants**: `GET /auth/tenants`
+### Formatação
 
-### Rotas Protegidas
+Para formatar o código com Prettier:
+```sh
+pnpm run format
+```
 
-- **Rota Protegida**: `GET /protected`
-  - Requer autenticação com token JWT.
+## Dependências
 
-## Execução de Testes
+- `@prisma/client`
+- `bcryptjs`
+- `cors`
+- `dotenv`
+- `express`
+- `jsonwebtoken`
+- `multer`
+- `swagger-jsdoc`
+- `swagger-ui-express`
+- `zod`
 
-- **Executar Testes Automatizados**:
+## Dependências de Desenvolvimento
 
-  - Se você tiver testes automatizados configurados, execute-os para garantir que tudo está funcionando conforme o esperado.
+- `@jest/globals`
+- `@types/bcryptjs`
+- `@types/cors`
+- `@types/express`
+- `@types/jest`
+- `@types/jsonwebtoken`
+- `@types/mocha`
+- `@types/multer`
+- `@types/node`
+- `@types/supertest`
+- `@types/swagger-jsdoc`
+- `@types/swagger-ui-express`
+- `@typescript-eslint/eslint-plugin`
+- `@typescript-eslint/parser`
+- `eslint`
+- `eslint-config-prettier`
+- `eslint-plugin-prettier`
+- `jest`
+- `nodemon`
+- `prettier`
+- `prisma`
+- `supertest`
+- `ts-jest`
+- `ts-node`
+- `typescript`
 
-  ```bash
-  npm test
-  ```
+## Autor
 
-## Backup do Banco de Dados
+Will-Ifes
 
-- **Backup**:
+## Licença
 
-  - Execute o comando abaixo para fazer o backup do banco de dados.
+ISC
 
-  - exemplo
+---
 
-  ```bash
-  pg_dump -U chapolin -h localhost -p 5300 -d bancscccobase -F c -b -v -f bancscccobase_backup.dump
-  ```
+Para visualizar este arquivo Markdown de forma mais amigável, você pode usar a extensão [Markdown Preview Enhanced](https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced) no Visual Studio Code.
+
