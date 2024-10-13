@@ -117,3 +117,5 @@ export class TenantRepository {
     }
   }
 }
+
+export default new TenantRepository();

@@ -12,6 +12,7 @@ import permissionRoutes from '../routes/PermissionRoutes';
 import userRoutes from '../routes/UserRoutes';
 import tenantRoutes from '../routes/TenantRoutes';
 import manufacturerRoutes from '../routes/ManufacturerRoutes';
+import authRoutes from '../routes/AuthRoutes';
 import LoggerFactory from '../../infrastructure/logger/LoggerFactory';
 
 const app = express();
@@ -52,6 +53,8 @@ app.use('/tenants', tenantRoutes);
 logger.info('Tenant routes initialized.');
 app.use('/manufacturers', manufacturerRoutes);
 logger.info('Manufacturer routes initialized.');
+app.use('/auth', authRoutes);
+logger.info('Auth routes initialized.');
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

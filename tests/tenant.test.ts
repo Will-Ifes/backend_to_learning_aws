@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { PrismaClient } from '@prisma/client';
-import { afterAll, describe, it, expect, beforeAll } from '@jest/globals';
+import { afterAll, afterEach, describe, it, expect, beforeAll } from '@jest/globals';
 import http from 'http';
 import app from '../src/application/server/App';
 
@@ -18,7 +18,7 @@ beforeAll((done) => {
   });
 });
 
-afterAll(async () => {
+afterEach(async () => {
   // Deletar os tenants criados durante os testes
   await prisma.tenant.deleteMany({
     where: {
@@ -27,7 +27,10 @@ afterAll(async () => {
       },
     },
   });
+  createdTenantIds = [];
+});
 
+afterAll(async () => {
   // Fechar a conexão com o Prisma após os testes
   await prisma.$disconnect();
 
@@ -36,8 +39,6 @@ afterAll(async () => {
 });
 
 describe('Tenant API', () => {
-
-
   it('deve criar um novo tenant', async () => {
     const tenantData = {
       name: 'Tenant Test Backend',

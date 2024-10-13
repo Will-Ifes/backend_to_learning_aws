@@ -39,8 +39,33 @@ export class UserRepository {
     }
   }
 
+  async getByEmail(email: string): Promise<User | null> {
+    try {
+      const user = await prisma.user.findFirst({
+        where: { email },
+      });
+      if (user) {
+        user.email = isEncryptedFormat(user.email) ? decrypt(user.email) : user.email;
+        user.password = isEncryptedFormat(user.password) ? decrypt(user.password) : user.password;
+        user.name = isEncryptedFormat(user.name) ? decrypt(user.name) : user.name;
+      }
+      return user;
+    } catch (error) {
+      console.error('Error in findByEmail:', error);
+      throw error;
+    }
+  }
+
   async create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<User> {
     try {
+      const tenantExists = await prisma.tenant.findUnique({
+        where: { id: data.tenantId },
+      });
+
+      if (!tenantExists) {
+        throw new Error('Tenant not found');
+      }
+
       const encryptedData = {
         ...data,
         email: encrypt(data.email),
@@ -103,3 +128,5 @@ export class UserRepository {
     }
   }
 }
+
+export default new UserRepository();

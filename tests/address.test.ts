@@ -1,9 +1,27 @@
 import request from 'supertest';
 import app from '../src/application/server/App';
 import { PrismaClient } from '@prisma/client';
-import { afterAll, describe, it, expect } from '@jest/globals';
+import { beforeAll, afterAll, afterEach, describe, it, expect } from '@jest/globals';
 
 const prisma = new PrismaClient();
+let createdAddressIds: number[] = [];
+
+beforeAll(async () => {
+  // Conectar ao Prisma antes dos testes
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  // Deletar os addresses criados durante os testes
+  await prisma.address.deleteMany({
+    where: {
+      id: {
+        in: createdAddressIds,
+      },
+    },
+  });
+  createdAddressIds = [];
+});
 
 afterAll(async () => {
   // Fechar a conexão com o Prisma após os testes
@@ -30,8 +48,8 @@ describe('Address API', () => {
     expect(response.body).toHaveProperty('id');
     expect(response.body.cep).toBe(addressData.cep);
 
-    // Deletar o address criado
-    await prisma.address.delete({ where: { id: response.body.id } });
+    // Armazenar o ID do address criado
+    createdAddressIds.push(response.body.id);
   });
 
   it('deve buscar todos os addresses', async () => {
@@ -55,14 +73,12 @@ describe('Address API', () => {
     const address = await prisma.address.create({
       data: addressData,
     });
+    createdAddressIds.push(address.id);
 
     const response = await request(app).get(`/addresses/${address.id}`);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('id', address.id);
-
-    // Deletar o address criado
-    await prisma.address.delete({ where: { id: address.id } });
   });
 
   it('deve atualizar um address existente', async () => {
@@ -79,6 +95,7 @@ describe('Address API', () => {
     const address = await prisma.address.create({
       data: addressData,
     });
+    createdAddressIds.push(address.id);
 
     const updatedData = {
       street: 'Rua Middleware Updated',
@@ -90,9 +107,6 @@ describe('Address API', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('street', updatedData.street);
-
-    // Deletar o address criado
-    await prisma.address.delete({ where: { id: address.id } });
   });
 
   it('deve deletar um address existente', async () => {
@@ -109,6 +123,7 @@ describe('Address API', () => {
     const address = await prisma.address.create({
       data: addressData,
     });
+    createdAddressIds.push(address.id);
 
     const response = await request(app).delete(`/addresses/${address.id}`);
 

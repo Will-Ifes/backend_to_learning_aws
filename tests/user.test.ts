@@ -1,10 +1,9 @@
 import request from 'supertest';
 import app from '../src/application/server/App';
 import { PrismaClient } from '@prisma/client';
-import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
+import { beforeAll, afterAll, afterEach, describe, it, expect } from '@jest/globals';
 
 const prisma = new PrismaClient();
-
 let createdUserIds: number[] = [];
 let tenantId: number;
 
@@ -22,7 +21,7 @@ beforeAll(async () => {
   tenantId = tenant.id;
 });
 
-afterAll(async () => {
+afterEach(async () => {
   // Deletar os users criados durante os testes
   await prisma.user.deleteMany({
     where: {
@@ -31,7 +30,10 @@ afterAll(async () => {
       },
     },
   });
+  createdUserIds = [];
+});
 
+afterAll(async () => {
   // Deletar o tenant criado para os testes
   await prisma.tenant.delete({
     where: { id: tenantId },
@@ -42,9 +44,6 @@ afterAll(async () => {
 });
 
 describe('User API', () => {
-
-
-  
   it('deve criar um novo user', async () => {
     const userData = {
       email: 'userbackend@test.com',

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllUsers, getUser, createNewUser, updateExistingUser, deleteExistingUser } from './UserService';
+import { getAllUsers,getUserByEmail,  getUser, createNewUser, updateExistingUser, deleteExistingUser } from './UserService';
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -7,6 +7,20 @@ export const getUsers = async (req: Request, res: Response) => {
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch users' });
+  }
+};
+
+
+export const getByEmail = async (req: Request, res: Response) => {
+  try {
+    const user = await getUserByEmail(String(req.params.email));
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch user' });
   }
 };
 
