@@ -8,87 +8,210 @@ generator client {
 }
 
 model Tenant {
-  id        Int       @id @default(autoincrement())
-  name      String
-  cnpj      String    @unique
-  address   String
-  phone     String
-  email     String
-  contact   String
-  users     User[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  products  Product[]
-  Movements Movement[]
+  id                 Int       @id @default(autoincrement())
+  name               String
+  cnpj               String
+  email              String
+  address            String?
+  contact            String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  users              User[]
+  products           Product[]
+  stockManagements   StockManagement[]
+  manufacturer       Manufacturer[]
+  employee           Employee[]
+  accessGroup        AccessGroup[]
+  activationCode     ActivationCode[]
+  positions          Positions[]
+  sector             Sector[]
+  supplier           Supplier[]
+}
+
+model Manufacturer {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  tenantId           Int
+  tenant             Tenant    @relation(fields: [tenantId], references: [id])
+
+  Product Product[]
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
-  email             String    @unique
-  password          String
-  name              String?
-  cpf               String    @unique
-  dateOfBirth       DateTime?
-  dailyExposureHours Int?
-  role              Role      @default(USER)
-  tenantId          Int
-  Tenant            Tenant    @relation(fields: [tenantId], references: [id])
-  status            Status    @default(ACTIVE)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  Movements         Movement[]
+  id                 Int        @id @default(autoincrement())
+  status             Status     @default(ACTIVE)
+  email              String
+  password           String
+  name               String
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  deletedAt          DateTime?
+  tenantId           Int
+  employeeId         Int?       @unique
+  employee           Employee?  @relation
+  accessGroups       AccessGroup[]
+  tenant             Tenant     @relation(fields: [tenantId], references: [id])
+
+  StockManagement StockManagement[]
+}
+
+model Employee {
+  id                 Int        @id @default(autoincrement())
+  cpf                String
+  skinColor          String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  deletedAt          DateTime?
+  tenantId           Int
+  userId             Int        @unique
+  addressId          Int        @unique
+  sectorId           Int?
+  positionId         Int?
+  sector             Sector?    @relation(fields: [sectorId], references: [id])
+  position           Positions? @relation(fields: [positionId], references: [id])
+  user               User       @relation(fields: [userId], references: [id])
+  address            Address?    @relation(fields: [addressId], references: [id])
+  tenant             Tenant     @relation(fields: [tenantId], references: [id])
+}
+
+model Address {
+  id                 Int       @id @default(autoincrement())
+  cep                String
+  street             String
+  neighborhood       String
+  number             String
+  city               String
+  state              String
+  country            String    @default("Brasil")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  employee           Employee[]
+  Supplier           Supplier[]
 }
 
 model Supplier {
-  id        Int       @id @default(autoincrement())
-  name      String
-  cnpj      String    @unique
-  address   String
-  phone     String
-  email     String
-  contact   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  products  Product[]
+  id                 Int       @id @default(autoincrement())
+  name               String
+  cnpj               String
+  phone              String
+  email              String
+  contact            String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  addressId          Int        @unique
+  tenantId           Int
+  products           Product[]
+  address            Address?    @relation(fields: [addressId], references: [id])
+  tenant             Tenant    @relation(fields: [tenantId], references: [id])
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  price       Float
-  supplierId  Int
-  brand       String
-  unit        String
-  quantity    Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Supplier    Supplier @relation(fields: [supplierId], references: [id])
-  tenantId    Int
-  tenant      Tenant   @relation(fields: [tenantId], references: [id])
-  movements   Movement[]
-  image       Bytes?
+  id                 Int      @id @default(autoincrement())
+  name               String
+  description        String
+  price              Float
+  brand              String?
+  unit               String
+  quantity           Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  deletedAt          DateTime?
+  supplierId         Int
+  manufacturerId     Int
+  tenantId           Int
+  image              Bytes?
+  stockManagement          StockManagement[]
+  supplier           Supplier @relation(fields: [supplierId], references: [id])
+  manufacturer       Manufacturer    @relation(fields: [manufacturerId], references: [id])
+  tenant             Tenant   @relation(fields: [tenantId], references: [id])
 }
 
-model Movement {
-  id          Int       @id @default(autoincrement())
-  type        MovementType
-  date        DateTime
-  quantity    Int
-  value       Float
-  productId   Int
-  Product     Product   @relation(fields: [productId], references: [id])
-  userId      Int
-  User        User      @relation(fields: [userId], references: [id])
-  tenantId    Int
-  Tenant      Tenant    @relation(fields: [tenantId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model StockManagement {
+  id                 Int       @id @default(autoincrement())
+  type               StockManagementType
+  date               DateTime
+  quantity           Int
+  value              Float
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  productId          Int
+  userId             Int
+  tenantId           Int
+  user               User      @relation(fields: [userId], references: [id])
+  Product            Product   @relation(fields: [productId], references: [id])
+  tenant             Tenant    @relation(fields: [tenantId], references: [id])
 }
 
-enum Role {
-  USER
-  ADMIN
+model Sector {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  tenantId           Int
+  employee           Employee[]
+  tenant             Tenant    @relation(fields: [tenantId], references: [id])
+}
+
+model Positions {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  tenantId           Int
+  employee           Employee[]
+  tenant             Tenant    @relation(fields: [tenantId], references: [id])
+}
+
+model ActivationCode {
+  id                 Int       @id @default(autoincrement())
+  code               String
+  isActive           Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  tenantId           Int
+  tenant             Tenant    @relation(fields: [tenantId], references: [id])
+}
+
+model AccessGroup {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  tenantId           Int
+  users              User[]
+  permissions        Permission[]
+  tenant             Tenant    @relation(fields: [tenantId], references: [id])
+}
+
+model Permission {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  url                String
+  label              String
+  listChecked        Boolean                         
+  createChecked      Boolean             
+  updateChecked      Boolean
+  deleteChecked      Boolean             
+  hasListOption      Boolean             
+  hasDeleteOption    Boolean             
+  hasCreateOption    Boolean             
+  hasUpdateOption    Boolean             
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  accessGroupId      Int
+  AccessGroup        AccessGroup @relation(fields: [accessGroupId], references: [id])
 }
 
 enum Status {
@@ -96,7 +219,7 @@ enum Status {
   INACTIVE
 }
 
-enum MovementType {
+enum StockManagementType {
   ENTRY
   EXIT
 }
