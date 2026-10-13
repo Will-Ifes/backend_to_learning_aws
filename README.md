@@ -10,20 +10,33 @@ A documentação principal e a cópia revisada estão em [wert-backend](https://
 
 API em Express, TypeScript, Prisma e PostgreSQL, com módulos de gestão e testes de rotas. O repositório registra uma etapa de estudos de publicação em AWS; não há garantia de infraestrutura ou endereço de produção ativo.
 
-## Caminhos de leitura
+<details>
+<summary><strong>Organização e código</strong></summary>
+
+### Caminhos de leitura
 
 - [Rotas da API](src/application/routes).
 - [Módulos de domínio](src/domain).
 - [Schema de dados](prisma/schema.prisma).
 - [Testes](tests).
 
-## Executar e consultar
+</details>
+
+<details>
+<summary><strong>Executar e consultar</strong></summary>
+
+### Executar e consultar
 
 Use as instruções da [edição revisada](https://github.com/Will-Ifes/wert-backend#executar-localmente), observando que código e configuração podem divergir entre as bases. Os comandos efetivos deste repositório estão em [package.json](package.json).
 
-## Escopo
+</details>
+
+<details>
+<summary>Escopo e referências</summary>
 
 Esta base histórica não deve ser tratada como modelo pronto para produção. Configurações, dados auxiliares e integrações antigas precisam de revisão antes de execução ou reutilização. Para demonstrações, utilize um ambiente próprio com dados fictícios.
+
+</details>
 
 ---
 
